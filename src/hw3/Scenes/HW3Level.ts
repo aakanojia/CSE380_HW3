@@ -94,7 +94,18 @@ export default abstract class HW3Level extends Scene {
 
     public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
         super(viewport, sceneManager, renderingManager, {...options, physics: {
-            // TODO configure the collision groups and collision map
+            groupNames: [
+                HW3PhysicsGroups.GROUND,
+                HW3PhysicsGroups.PLAYER,
+                HW3PhysicsGroups.PLAYER_WEAPON,
+                HW3PhysicsGroups.DESTRUCTABLE
+            ],
+            collisions: [
+                [0, 1, 1, 0],
+                [1, 0, 0, 1],
+                [1, 0, 0, 1],
+                [0, 1, 1, 0]
+            ]
          }});
         this.add = new HW3FactoryManager(this, this.tilemaps);
     }
@@ -164,6 +175,7 @@ export default abstract class HW3Level extends Scene {
             }
             // When the level ends, change the scene to the next level
             case HW3Events.LEVEL_END: {
+                this.emitter.fireEvent(GameEventType.STOP_SOUND, {key:this.levelMusicKey})
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
@@ -172,6 +184,7 @@ export default abstract class HW3Level extends Scene {
                 break;
             }
             case HW3Events.PLAYER_DEAD: {
+                this.emitter.fireEvent(GameEventType.STOP_SOUND, {key:this.levelMusicKey})
                 this.sceneManager.changeToScene(MainMenu);
                 break;
             }
@@ -210,6 +223,7 @@ export default abstract class HW3Level extends Scene {
                     if(tilemap.isTileCollidable(col, row) && this.particleHitTile(tilemap, particle, col, row)){
                         this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.tileDestroyedAudioKey, loop: false, holdReference: false });
                         // TODO Destroy the tile
+                        tilemap.setTileAtRowCol(new Vec2(col,row), 0)
                     }
                 }
             }
@@ -227,7 +241,19 @@ export default abstract class HW3Level extends Scene {
      */
     protected particleHitTile(tilemap: OrthogonalTilemap, particle: Particle, col: number, row: number): boolean {
         // TODO detect whether a particle hit a tile
-        return;
+        const tileHitbox = tilemap.boundary;
+        const particleHitbox = particle.boundary;
+
+        if (particleHitbox.right < tileHitbox.left || particleHitbox.left > tileHitbox.right || 
+            particleHitbox.bottom < tileHitbox.top || particleHitbox.top > tileHitbox.bottom) {
+            // the particle and tile do not intersect, so there is no collision
+            console.log("tile not hit")
+            return false;
+        } else {
+            // the particle and tile intersect, so there is a collision
+            console.log("tile hit")
+            return true;
+    }
     }
 
     /**
@@ -408,6 +434,7 @@ export default abstract class HW3Level extends Scene {
         
         // Give the player physics
         this.player.addPhysics(new AABB(this.player.position.clone(), this.player.boundary.getHalfSize().clone()));
+        this.player.setGroup(HW3PhysicsGroups.PLAYER);
 
         // TODO - give the player their flip tween
         this.player.tweens.add(PlayerTweens.FLIP, {
