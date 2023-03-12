@@ -188,6 +188,9 @@ export default abstract class HW3Level extends Scene {
                 this.sceneManager.changeToScene(MainMenu);
                 break;
             }
+            case HW3Events.TILE_BROKEN: {
+                this.handleParticleHit(event.data.get("node"));
+            }
             // Default: Throw an error! No unhandled events allowed.
             default: {
                 throw new Error(`Unhandled event caught in scene with type ${event.type}`)
@@ -317,6 +320,9 @@ export default abstract class HW3Level extends Scene {
         this.walls.addPhysics();
         // Add physics to the destructible layer of the tilemap
         this.destructable.addPhysics();
+
+        this.destructable.setGroup(HW3PhysicsGroups.DESTRUCTABLE);
+        this.destructable.setTrigger(HW3PhysicsGroups.PLAYER_WEAPON, HW3Events.TILE_BROKEN, null);
     }
     /**
      * Handles all subscriptions to events
@@ -327,6 +333,7 @@ export default abstract class HW3Level extends Scene {
         this.receiver.subscribe(HW3Events.LEVEL_END);
         this.receiver.subscribe(HW3Events.HEALTH_CHANGE);
         this.receiver.subscribe(HW3Events.PLAYER_DEAD);
+        this.receiver.subscribe(HW3Events.TILE_BROKEN);
     }
     /**
      * Adds in any necessary UI to the game
@@ -414,6 +421,9 @@ export default abstract class HW3Level extends Scene {
     protected initializeWeaponSystem(): void {
         this.playerWeaponSystem = new PlayerWeapon(50, Vec2.ZERO, 1000, 3, 0, 50);
         this.playerWeaponSystem.initializePool(this, HW3Layers.PRIMARY);
+        for (let particle of this.playerWeaponSystem.getPool()) {
+            particle.setGroup(HW3PhysicsGroups.PLAYER_WEAPON);
+        }
     }
     /**
      * Initializes the player, setting the player's initial position to the given position.
