@@ -91,6 +91,7 @@ export default abstract class HW3Level extends Scene {
     protected levelMusicKey: string;
     protected jumpAudioKey: string;
     protected tileDestroyedAudioKey: string;
+    protected deathAudioKey: string;
 
     public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
         super(viewport, sceneManager, renderingManager, {...options, physics: {
@@ -516,6 +517,11 @@ export default abstract class HW3Level extends Scene {
     }
 
     /* Misc methods */
+
+    // Get the key of the player's death audio file
+    public getDeathAudioKey(): string {
+        return this.deathAudioKey
+    }
 
     // Get the key of the player's jump audio file
     public getJumpAudioKey(): string {

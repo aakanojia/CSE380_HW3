@@ -22,10 +22,13 @@ export default class Level1 extends HW3Level {
     public static readonly WALLS_LAYER_KEY = "Main";
 
     public static readonly LEVEL_MUSIC_KEY = "LEVEL_MUSIC";
-    public static readonly LEVEL_MUSIC_PATH = "hw4_assets/music/hw5_level_music.wav";
+    public static readonly LEVEL_MUSIC_PATH = "hw4_assets/music/luffy_8_bit_theme.wav";
 
     public static readonly JUMP_AUDIO_KEY = "PLAYER_JUMP";
     public static readonly JUMP_AUDIO_PATH = "hw4_assets/sounds/jump.wav";
+
+    public static readonly DEATH_AUDIO_KEY = "PLAYER_DEATH";
+    public static readonly DEATH_AUDIO_PATH = "hw4_assets/sounds/scream.wav";
 
     public static readonly TILE_DESTROYED_KEY = "TILE_DESTROYED";
     public static readonly TILE_DESTROYED_PATH = "hw4_assets/sounds/switch.wav";
@@ -50,6 +53,7 @@ export default class Level1 extends HW3Level {
         this.levelMusicKey = Level1.LEVEL_MUSIC_KEY
         this.jumpAudioKey = Level1.JUMP_AUDIO_KEY;
         this.tileDestroyedAudioKey = Level1.TILE_DESTROYED_KEY;
+        this.deathAudioKey = Level1.DEATH_AUDIO_KEY;
 
         // Level end size and position
         this.levelEndPosition = new Vec2(128, 232).mult(this.tilemapScale);
@@ -67,6 +71,7 @@ export default class Level1 extends HW3Level {
         // Audio and music
         this.load.audio(this.levelMusicKey, Level1.LEVEL_MUSIC_PATH);
         this.load.audio(this.jumpAudioKey, Level1.JUMP_AUDIO_PATH);
+        this.load.audio(this.deathAudioKey, Level1.DEATH_AUDIO_PATH);
         this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
     }
 
@@ -77,7 +82,7 @@ export default class Level1 extends HW3Level {
         // TODO decide which resources to keep/cull 
         this.resourceManager.keepSpritesheet(this.playerSpriteKey);
         this.resourceManager.keepAudio(this.tileDestroyedAudioKey);
-        //this.resourceManager.keepAudio(this.playerDeadAudioKey);
+        this.resourceManager.keepAudio(this.deathAudioKey);
         this.resourceManager.keepAudio(this.jumpAudioKey);
     }
 
