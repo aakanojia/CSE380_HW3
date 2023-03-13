@@ -23,10 +23,9 @@ import Dead from "./PlayerStates/Dead";
  */
 export const PlayerAnimations = {
     IDLE: "IDLE",
-    WALK: "WALK",
     JUMP: "JUMP",
-    RUN_LEFT: "RUN_LEFT",
-    RUN_RIGHT: "RUN_RIGHT",
+    WALKING_LEFT: "WALKING_LEFT",
+    WALKING_RIGHT: "WALKING_RIGHT",
     TAKING_DAMAGE: "TAKING_DAMAGE",
     DYING: "DYING",
     DEAD: "DEAD",
@@ -115,11 +114,40 @@ export default class PlayerController extends StateMachineAI {
     public update(deltaT: number): void {
 		super.update(deltaT);
 
+        const velocity = this._velocity;
+
+        if (this.owner.onGround && Input.isPressed(HW3Controls.MOVE_RIGHT)){
+            if(velocity.x === 0) {
+                this.owner.animation.playIfNotAlready("IDLE", true);
+            } else {
+                this.owner.animation.playIfNotAlready("WALKING_RIGHT", true);
+            }
+        }
+
+
+        if (this.owner.onGround && Input.isPressed(HW3Controls.MOVE_LEFT)){
+            this.owner.invertX = true;
+            if(velocity.x === 0) {
+                this.owner.animation.playIfNotAlready("IDLE", true);
+            } else {
+                this.owner.animation.playIfNotAlready("WALKING_RIGHT", true);
+            }
+        }
+
+        if (Input.isPressed(HW3Controls.ATTACK)) {
+            this.owner.animation.play("ATTACKING_RIGHT", false);
+        
+        }
+
         // If the player hits the attack button and the weapon system isn't running, restart the system and fire!
         if (Input.isPressed(HW3Controls.ATTACK) && !this.weapon.isSystemRunning()) {
             // Start the particle system at the player's current position
             this.weapon.startSystem(500, 0, this.owner.position);
         }
+
+        // if(velocity.x === 0) {
+        //     this.owner.animation.playIfNotAlready("IDLE", true);
+        // }
 
 	}
 

@@ -17,7 +17,7 @@ import Viewport from "../../Wolfie2D/SceneGraph/Viewport";
 import Timer from "../../Wolfie2D/Timing/Timer";
 import Color from "../../Wolfie2D/Utils/Color";
 import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
-import PlayerController, { PlayerTweens } from "../Player/PlayerController";
+import PlayerController, { PlayerAnimations, PlayerTweens } from "../Player/PlayerController";
 import PlayerWeapon from "../Player/PlayerWeapon";
 
 import { HW3Events } from "../HW3Events";
@@ -193,7 +193,7 @@ export default abstract class HW3Level extends Scene {
             }
             // Default: Throw an error! No unhandled events allowed.
             default: {
-                throw new Error(`Unhandled event caught in scene with type ${event.type}`)
+                //throw new Error(`Unhandled event caught in scene with type ${event.type}`)
             }
         }
     }
@@ -318,6 +318,8 @@ export default abstract class HW3Level extends Scene {
 
         // Add physicss to the wall layer
         this.walls.addPhysics();
+        this.walls.setGroup(HW3PhysicsGroups.GROUND);
+
         // Add physics to the destructible layer of the tilemap
         this.destructable.addPhysics();
 
@@ -439,7 +441,7 @@ export default abstract class HW3Level extends Scene {
 
         // Add the player to the scene
         this.player = this.add.animatedSprite(key, HW3Layers.PRIMARY);
-        this.player.scale.set(1, 1);
+        this.player.scale.set(1/4, 1/4);
         this.player.position.copy(this.playerSpawn);
         
         // Give the player physics

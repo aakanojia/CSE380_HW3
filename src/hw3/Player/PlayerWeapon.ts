@@ -24,7 +24,7 @@ export default class PlayerWeapon extends ParticleSystem {
      * @returns true if the particle system is running; false otherwise.
      */
     public isSystemRunning(): boolean { return this.systemRunning; }
-
+    
     /**
      * Sets the animations for a particle in the player's weapon
      * @param particle the particle to give the animation to
